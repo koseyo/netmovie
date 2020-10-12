@@ -13,13 +13,14 @@ jobs:
             - restore_cache:
                 keys:
                     - app-{{ checksum "package.json" }}
+                    - app-
             - run:
                 name: Install npx
-                command: npm install -g npx
+                command: npm install -g npm
             - save_cache:
                 paths:
                     - node_modules
-                keys: app-{{ checksum "package.json" }}
+                key: app-{{ checksum "package.json" }}
 
     deploy-to-aws-s3:
         docker:
