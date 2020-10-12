@@ -16,7 +16,7 @@ jobs:
                     - app-
             - run:
                 name: Install npx
-                command: npm install -g npx
+                command: npm install -g npm
             - save_cache:
                 paths:
                     - node_modules
