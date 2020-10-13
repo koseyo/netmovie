@@ -66,3 +66,21 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+### 目的
+
+herokuでのデプロイ方法を学んだので、今までの復習とリファクタリングも兼ねて一度作ったnetmovixをリニューアルする予定です。
+
+### 使用する技術
+
+・HTML5/CSS3
+・JavaScript
+・React
+・Redux
+・Node.js
+・AWS(EC2,S3、Cloudfront)
+・CircleCI
+・Prettier
+・Eslint
+・Slack
+・Heroku
