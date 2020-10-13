@@ -78,7 +78,7 @@ herokuでのデプロイ方法を学んだので、今までの復習とリフ�
 ・React<br />
 ・Redux<br />
 ・Node.js<br />
-・AWS(EC2,S3、Cloudfront)<br />
+・AWS(EC2、S3、Cloudfront)<br />
 ・CircleCI<br />
 ・Prettier<br />
 ・Eslint<br />
