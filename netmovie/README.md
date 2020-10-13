@@ -73,14 +73,14 @@ herokuでのデプロイ方法を学んだので、今までの復習とリフ�
 
 ### 使用する技術
 
-・HTML5/CSS3
-・JavaScript
-・React
-・Redux
-・Node.js
-・AWS(EC2,S3、Cloudfront)
-・CircleCI
-・Prettier
-・Eslint
-・Slack
-・Heroku
+・HTML5/CSS3<br />
+・JavaScript<br />
+・React<br />
+・Redux<br />
+・Node.js<br />
+・AWS(EC2,S3、Cloudfront)<br />
+・CircleCI<br />
+・Prettier<br />
+・Eslint<br />
+・Slack<br />
+・Heroku<br />
