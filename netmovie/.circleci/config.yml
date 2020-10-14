@@ -52,6 +52,24 @@ jobs:
             - *install-npm
             - *save-cache
 
+    deploy-to-heroku:
+        executors: app-executor
+        steps:
+            - checkout
+            - *show-current-branch-name
+            - run:
+                name: Deploy to Heroku
+                command: |
+                    if[ "${CURRENT_BRANCH" == "master" ]
+                    then
+                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-production.git ${CURRENT_BRANCH}:master -f
+                    elif[ "${CURRENT_BRANCH" == "staging" ]
+                    then
+                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-staging.git ${CURRENT_BRANCH}:master -f
+                    else
+                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-dev.git ${CURRENT_BRANCH}:master -f
+                    fi
+
     deploy-to-aws-s3:
         executors: app-executor
         steps:
@@ -96,6 +114,15 @@ workflows:
     build_and_deploy:
         jobs:
             - build
+            - deploy-to-heroku:
+                requires:
+                    - build
+                filters:
+                    branches:
+                        only:
+                            - develop
+                            - staging
+                            - master
             - deploy-to-aws-s3:
                 requires:
                     - build
