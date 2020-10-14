@@ -32,6 +32,15 @@ aliases:
                 sudo apt-get -y -qq update
                 sudo apt-get install -y awscli
                 sudo apt-get install -y python-pip python-dev build-essential
+    - &build-project
+        run:
+            name: Build Project
+            command: | 
+                npm install
+                npm run build
+                cd build
+                zip ../build.zip -r * .[^.]*
+                echo "Build successful!"
 
 jobs:
     build:
@@ -49,14 +58,7 @@ jobs:
             - checkout
             - *show-current-branch-name
             - *install-aws-cli
-            - run:
-                name: Build Project
-                command: | #
-                    npm install
-                    npm run build
-                    cd build
-                    zip ../build.zip -r * .[^.]*
-                    echo "Build successful!"
+            - *build-project
             - run:
                 name: Deploy to AWS S3
                 command: |
@@ -74,24 +76,9 @@ jobs:
         executors: app-executor
         steps:
             - checkout
-            - run:
-                name: Show current branch
-                command: echo ${CURRENT_BRANCH}
-            - run:
-                name: Installing AWS CLI
-                working_directory: /
-                command: |
-                    sudo apt-get -y -qq update
-                    sudo apt-get install -y awscli
-                    sudo apt-get install -y python-pip python-dev build-essential
-            - run:
-                name: Build Project
-                command: |
-                    npm install
-                    npm run build
-                    cd build
-                    zip ../build.zip -r * .[^.]*
-                    echo "Build successful!"
+            - *show-current-branch-name
+            - *install-aws-cli
+            - *build-project
             - run:
                 name: Deploy to AWS Cloudfront
                 command: |
