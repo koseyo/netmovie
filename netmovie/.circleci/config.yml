@@ -1,5 +1,5 @@
 version: 2.1
-executors:
+executor:
     app-executor:
         docker:
             - image: circleci/node:12.18.1
@@ -44,7 +44,7 @@ aliases:
 
 jobs:
     build:
-        executors: app-executor
+        executor: app-executor
         steps:
             - checkout
             - *show-current-branch-name
@@ -52,8 +52,29 @@ jobs:
             - *install-npm
             - *save-cache
 
+    linting:
+        executor: app-executor
+        steps:
+            - checkout
+            - *show-current-branch-name
+            - *restore-cache
+            - run:
+                name: Run lintng
+                command: npm run lint
+    
+    prettier:
+        executor: app-executor
+        steps:
+            - checkout
+            - *show-current-branch-name
+            - *restore-cache
+            - run:
+                name: Run prettier check
+                command: npm run prettier-check
+                
+
     deploy-to-heroku:
-        executors: app-executor
+        executor: app-executor
         steps:
             - checkout
             - *show-current-branch-name
@@ -71,7 +92,7 @@ jobs:
                     fi
 
     deploy-to-aws-s3:
-        executors: app-executor
+        executor: app-executor
         steps:
             - checkout
             - *show-current-branch-name
@@ -91,7 +112,7 @@ jobs:
                     fi
 
     deploy-to-aws-cloudfront:
-        executors: app-executor
+        executor: app-executor
         steps:
             - checkout
             - *show-current-branch-name
@@ -114,6 +135,24 @@ workflows:
     build_and_deploy:
         jobs:
             - build
+            - linting:
+                requires:
+                    - build
+                filters:
+                    branches:
+                        only:
+                            - develop
+                            - staging
+                            - master
+            - prettier:
+                requires:
+                    - build
+                filters:
+                    branches:
+                        only:
+                            - develop
+                            - staging
+                            - master
             - deploy-to-heroku:
                 requires:
                     - build
