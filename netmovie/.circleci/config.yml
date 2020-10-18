@@ -1,9 +1,15 @@
+orbs:
+    slack: circleci/slack@3.4.2
 version: 2.1
-executor:
+executors:
     app-executor:
         docker:
             - image: circleci/node:12.18.1
         working_directory: ~/project
+    slack-executor:
+        docker:
+            - image: 'cibuilds/base:latest'
+        resource_class: small
 
 aliases:
     - &show-current-branch-name
@@ -72,25 +78,6 @@ jobs:
                 name: Run prettier check
                 command: npm run prettier-check
                 
-
-    deploy-to-heroku:
-        executor: app-executor
-        steps:
-            - checkout
-            - *show-current-branch-name
-            - run:
-                name: Deploy to Heroku
-                command: |
-                    if[ "${CURRENT_BRANCH" == "master" ]
-                    then
-                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-production.git ${CURRENT_BRANCH}:master -f
-                    elif[ "${CURRENT_BRANCH" == "staging" ]
-                    then
-                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-staging.git ${CURRENT_BRANCH}:master -f
-                    else
-                        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/netmovie-dev.git ${CURRENT_BRANCH}:master -f
-                    fi
-
     deploy-to-aws-s3:
         executor: app-executor
         steps:
@@ -131,6 +118,15 @@ jobs:
                         aws cloudfront create-invalidation --distribution-id ${DEV_DISTRIBUTION_ID} --paths /\*
                     fi
 
+    notify-via-slack:
+        executor: slack-executor
+        steps:
+            - slack/notify:
+                message: "${CURRENT_BRANCH} deployment to aws & cloudfront are complete!"
+                webhook: $SLACK_WEBHOOK
+            - slack/status:
+                webhook: $SLACK_WEBHOOK
+
 workflows:
     build_and_deploy:
         jobs:
@@ -145,15 +141,6 @@ workflows:
                             - staging
                             - master
             - prettier:
-                requires:
-                    - build
-                filters:
-                    branches:
-                        only:
-                            - develop
-                            - staging
-                            - master
-            - deploy-to-heroku:
                 requires:
                     - build
                 filters:
@@ -180,3 +167,12 @@ workflows:
                             - develop
                             - staging
                             - master
+            - notify-via-slack:
+                requires:
+                    - deploy-to-aws-cloudfront
+                filters:
+                    branches:
+                    only:
+                        - develop
+                        - staging
+                        - master
