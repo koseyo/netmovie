@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Header.scss";
-// import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.png";
 
 const HEADER_LIST = [
   {
@@ -51,7 +51,7 @@ export const Header = () => {
         <div className="header-bar"></div>
         <div className="header-nav">
           <div className="header-image">
-            {/* <img src={logo} alt="" /> */}
+            <img src={logo} alt="" />
           </div>
           <div className={`${menuClass ? "header-toggle active" : "header-toggle"}`} id="header-toggle" onClick={() => toggleMenu()}>
             <span className="bar"></span>
